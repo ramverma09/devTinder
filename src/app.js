@@ -2,23 +2,48 @@ const express  = require('express');
 
 const app = express();
 
-const {adminAuth,userAuth} = require("./middlewares/auth.js");
-
-app.use("/admin", adminAuth);
-
-app.get("/user",userAuth, (req,res) =>{
-    res.send("User data fetched successfully");
+app.use("/",(err,req,res,next) =>{
+    if(err){
+    res.status(500).send("Some Server Error");
+}
 });
 
-app.get("/admin/getAllData", (req,res,) =>{
-        res.send("All data fetched successfully"); 
+app.use("/getuserData", (req,res) =>{
+    try{
+        //fetch user data from DB
+        throw new Error("Something went wrong while fetching user data");
+        res.send("User data fetched successfully");
+    }catch(err){
+        res.status(500).send("something went wrong");
+    }
+
 });
 
-app.delete("/admin/deleteUser", (req,res) =>{
-       res.send("User deleted successfully");
+app.use("/",(err,req,res,next) =>{
+    if(err){
+    res.status(500).send("Some Server Error");
+}
 });
 
 
+// -------------writing middlewares for authentication and authorization----------------
+// const {adminAuth,userAuth} = require("./middlewares/auth.js");
+
+// app.use("/admin", adminAuth);
+
+// app.get("/user",userAuth, (req,res) =>{
+//     res.send("User data fetched successfully");
+// });
+
+// app.get("/admin/getAllData", (req,res,) =>{
+//         res.send("All data fetched successfully"); 
+// });
+
+// app.delete("/admin/deleteUser", (req,res) =>{
+//        res.send("User deleted successfully");
+// });
+
+// ----------
 // app.use("/", (req,res,next) =>{
 //     console.log("Middleware 1");
 //     next();
@@ -35,7 +60,7 @@ app.delete("/admin/deleteUser", (req,res) =>{
 //         // next();
 //     }
 // );
-
+// -------------------
 
 
 // app.get("/user/:userId/:name/:password", (req,res) =>{
