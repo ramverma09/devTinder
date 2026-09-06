@@ -2,31 +2,41 @@ const express  = require('express');
 
 const app = express();
 
-app.use("/user", (req, res, next) => {
-    console.log("User routes initialized 1");
-    // res.send("Response 1");
-    next();
-},
-    (req, res,next) => {
-        console.log("User routes initialized 2");
-        // res.send("User routes initialized 2");
-        next();
-    },
-     (req, res, next) => {
-    console.log("User routes initialized 3");
-    // res.send("Response 3");
-    next();
-},
-    [(req, res, next) => {
-    console.log("User routes initialized 4");
-    // res.send("Response 4");
-    next();
-    },(req, res, next) => {
-    console.log("User routes initialized 5");
-    res.send("Response 5");
-    // next();
-}]
-);
+const {adminAuth,userAuth} = require("./middlewares/auth.js");
+
+app.use("/admin", adminAuth);
+
+app.get("/user",userAuth, (req,res) =>{
+    res.send("User data fetched successfully");
+});
+
+app.get("/admin/getAllData", (req,res,) =>{
+        res.send("All data fetched successfully"); 
+});
+
+app.delete("/admin/deleteUser", (req,res) =>{
+       res.send("User deleted successfully");
+});
+
+
+// app.use("/", (req,res,next) =>{
+//     console.log("Middleware 1");
+//     next();
+// }); 
+
+// app.get("/user", (req, res, next) => {
+//     console.log("User routes initialized 1");
+//     // res.send("Response 1");
+//     next();
+// },
+//     (req, res,next) => {
+//         console.log("User routes initialized 2");
+//         res.send("User routes initialized 2");
+//         // next();
+//     }
+// );
+
+
 
 // app.get("/user/:userId/:name/:password", (req,res) =>{
 //     console.log(req.params);
