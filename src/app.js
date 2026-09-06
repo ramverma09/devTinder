@@ -1,29 +1,58 @@
 const express  = require('express');
-
+const connectDB= require("./config/database");
 const app = express();
+const User = require("./models/user");
 
-app.use("/",(err,req,res,next) =>{
-    if(err){
-    res.status(500).send("Some Server Error");
-}
-});
+app.post("/signup", async (req,res)=>{
+    const user = new User({
+        firstName: "Sachin",
+        lastName: "Yadav",
+        password: "sachin@123",
+        emailId: "sachin@gmail.com",
+    });
 
-app.use("/getuserData", (req,res) =>{
     try{
-        //fetch user data from DB
-        throw new Error("Something went wrong while fetching user data");
-        res.send("User data fetched successfully");
-    }catch(err){
-        res.status(500).send("something went wrong");
+        await user.save();
+        res.send("User data saved successfully to the database");
+    } catch (err) {
+        res.status(400).send("Error saving user data: " + err.message);
     }
-
 });
 
-app.use("/",(err,req,res,next) =>{
-    if(err){
-    res.status(500).send("Some Server Error");
-}
+connectDB().then(() => {
+    console.log("Database connected successfully");
+    app.listen(7777, ()=>{
+    console.log('Server is running on port 7777');
 });
+}).catch((err) => {
+    console.log("Error while connecting to database");
+});
+
+
+
+// -------------writing middlewares for error handling------------
+// app.use("/",(err,req,res,next) =>{
+//     if(err){
+//     res.status(500).send("Some Server Error");
+// }
+// });
+
+// app.use("/getuserData", (req,res) =>{
+//     try{
+//         //fetch user data from DB
+//         throw new Error("Something went wrong while fetching user data");
+//         res.send("User data fetched successfully");
+//     }catch(err){
+//         res.status(500).send("something went wrong");
+//     }
+
+// });
+
+// app.use("/",(err,req,res,next) =>{
+//     if(err){
+//     res.status(500).send("Some Server Error");
+// }
+// });
 
 
 // -------------writing middlewares for authentication and authorization----------------
@@ -89,6 +118,6 @@ app.use("/",(err,req,res,next) =>{
 //     res.send('Hello World and Namaste from  Dashboard');
 // });
 
-app.listen(7777, ()=>{
-    console.log('Server is running on port 7777');
-});
+// app.listen(7777, ()=>{
+//     console.log('Server is running on port 7777');
+// });
