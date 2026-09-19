@@ -21,9 +21,9 @@ app.post("/signup", async (req,res)=>{
     }
 });
 
-
+// Get user data api - get /user -> get user data from the database
 app.get("/user",async (req,res)=>{
-    const userEmail =req.body.emailId;
+    const userEmail = req.body.emailId;
     try{
         const users = await User.find({emailId: userEmail});
         if(users.length ===0){
@@ -46,6 +46,7 @@ app.get("/feed",async (req,res) => {
     } 
 });
 
+// Delete user data api - delete /user -> delete user data from the database
 app.delete("/user", async (req,res) => {
     const userId = req.body.userId;
     try{
@@ -61,18 +62,20 @@ app.delete("/user", async (req,res) => {
         res.status(404).send("something went wrong");
     }
 });
-
+//update user data api - patch /user -> update user data in the database
 app.patch("/user",async (req,res)=>{
     const userId = req.body.userId;
     const data = req.body;
     // console.log(data);
     try{
-        await User.findByIdAndUpdate({ _id:userId},data, {returnDocument: "after",});
+        await User.findByIdAndUpdate({ _id:userId},data, {returnDocument: "after",
+            runValidators: true 
+        });
         // console.log(user);
         res.send("User data updated successfully");
 
     }catch(err){
-        res.status(404).send("something went wrong");
+        res.status(404).send("Update failed: " + err.message);
     }
 });
 
