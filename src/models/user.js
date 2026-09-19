@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+const validator = require('validator');
+
 const userSchema = new mongoose.Schema({
     firstName: {
         type: String,
@@ -12,14 +14,24 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true
+        required: true,
+        validate(value){
+            if(!validator.isStrongPassword(value)){
+                throw new Error("Password is not strong enough"+value);
+            }
+        }
     },
     emailId: {
         type: String,
         required: true,
         lowercase: true,
         unique: true,
-        trim: true
+        trim: true,
+        validate(value){
+            if(!validator.isEmail(value)){
+                throw new Error("Invalid Email address"+value);
+            }
+        }
     },
     age: {
         type: Number,
@@ -35,7 +47,12 @@ const userSchema = new mongoose.Schema({
     },
     photoUrl: {
         type: String,
-        default: "https://hostalitecloud.com/crb/wp-content/uploads/2025/10/dummy-user-male.jpg"
+        default: "https://hostalitecloud.com/crb/wp-content/uploads/2025/10/dummy-user-male.jpg",
+        validate(value){
+            if(!validator.isURL(value)){
+                throw new Error("Invalid Photo URL"+value);
+            }
+        }
     },
     about: {
         type: String,
