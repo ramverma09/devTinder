@@ -21,6 +21,7 @@ app.post("/signup", async (req,res)=>{
     }
 });
 
+
 // Get user data api - get /user -> get user data from the database
 app.get("/user",async (req,res)=>{
     const userEmail = req.body.emailId;
@@ -36,6 +37,7 @@ app.get("/user",async (req,res)=>{
     }
 });
 
+
 // Feed Api - Get /feed -> get all the users data from the database
 app.get("/feed",async (req,res) => {
     try{
@@ -45,6 +47,7 @@ app.get("/feed",async (req,res) => {
         res.status(500).send("Error fetching user data: " + err.message);
     } 
 });
+
 
 // Delete user data api - delete /user -> delete user data from the database
 app.delete("/user", async (req,res) => {
@@ -62,12 +65,38 @@ app.delete("/user", async (req,res) => {
         res.status(404).send("something went wrong");
     }
 });
+
+
 //update user data api - patch /user -> update user data in the database
-app.patch("/user",async (req,res)=>{
-    const userId = req.body.userId;
+app.patch("/user/:userId",async (req,res)=>{
+    const userId = req.params?.userId;
     const data = req.body;
     // console.log(data);
+
+    
+    //     {
+        //     "userId": "6aaebaf0cc6503085319102b",
+        //     "age":18,
+        //     "emailId": "ranbir@gmail.com",
+        //     "gender": "male",
+        //     "skills": ["javascript","acting","drama"],
+        //     "xyz": "sdfvsv"
+        // }
+        
+    
+
     try{
+
+        const ALLOWED_UPDATES = ["photoUrl", "about", "gender","age","skills"];
+        const isUpdateAllowed = Object.keys(data).every((k) => ALLOWED_UPDATES.includes(k));
+
+        if(!isUpdateAllowed){
+          throw new Error("Invalid updates");
+        }
+        if(data?.skills.length > 10){
+            throw new Error("Skills cannot be more than 10");
+        }
+
         await User.findByIdAndUpdate({ _id:userId},data, {returnDocument: "after",
             runValidators: true 
         });
