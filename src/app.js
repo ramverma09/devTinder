@@ -34,6 +34,29 @@ app.post("/signup", async (req,res)=>{
     }
 });
 
+app.post("/login", async (req,res) =>{ 
+
+    try{
+        const {emailId, password} = req.body;
+        // if(!emailId || !password){
+        //     throw new Error("Missing required fields");
+        // }
+        const user = await User.findOne({emailId:emailId});
+        if(!user){
+            throw new Error("INvalid credentials");
+        }
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+
+        if(isPasswordValid){
+            res.send("User logged in successfully");
+        } else {
+            throw new Error("Invalid credentials");
+        }
+
+    } catch(err) {
+        res.status(400).send("Error : " + err.message);
+    }
+});
 
 // Get user data api - get /user -> get user data from the database
 app.get("/user",async (req,res)=>{
