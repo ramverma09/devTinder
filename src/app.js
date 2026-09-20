@@ -4,8 +4,12 @@ const app = express();
 const User = require("./models/user");
 const {validateSignUpData} = require("./utils/validation");
 const bcrypt = require('bcrypt');
+const cookieParser = require('cookie-parser');
+const jwt = require('jsonwebtoken');
 
 app.use(express.json());
+app.use(cookieParser());
+
 
 // init - dataBase
 app.post("/signup", async (req,res)=>{
@@ -38,9 +42,7 @@ app.post("/login", async (req,res) =>{
 
     try{
         const {emailId, password} = req.body;
-        // if(!emailId || !password){
-        //     throw new Error("Missing required fields");
-        // }
+        
         const user = await User.findOne({emailId:emailId});
         if(!user){
             throw new Error("INvalid credentials");
@@ -48,6 +50,15 @@ app.post("/login", async (req,res) =>{
         const isPasswordValid = await bcrypt.compare(password, user.password);
 
         if(isPasswordValid){
+
+            //create JWT tocken
+
+            const token = await jwt.sign({_id: user._id},"DEV@Tinder$790");
+            // console.log("Token: ", token);
+
+            //and token to cookie and send response back to user
+            res.cookie("token", token)
+
             res.send("User logged in successfully");
         } else {
             throw new Error("Invalid credentials");
@@ -55,6 +66,31 @@ app.post("/login", async (req,res) =>{
 
     } catch(err) {
         res.status(400).send("Error : " + err.message);
+    }
+});
+
+app.get("/profile", async (req,res)=> {
+    try{
+    const cookies = req.cookies;
+    const {token} = cookies;
+    if(!token){
+        throw new Error("Invalid token");
+    }
+    //validate the token
+    const decodedMessage = await jwt.verify(token, "DEV@Tinder$790"); 
+    // console.log("Decoded Message: ", decodedMessage);
+
+    const {_id} = decodedMessage;
+    // console.log("Logged in user id: ", _id);
+
+    const user = await User.findById({_id});
+    if(!user){
+        throw new Error("User does not exsist");
+    }
+
+    res.send(user);
+    }catch (err) {
+        res.status(404).send("something went wrong");
     }
 });
 
