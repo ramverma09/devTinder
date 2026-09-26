@@ -48,7 +48,7 @@ app.post("/login", async (req,res) =>{
         if(!user){
             throw new Error("INvalid credentials");
         }
-        const isPasswordValid = await validatePassword(password);
+        const isPasswordValid = await user.validatePassword(password);
 
         if(isPasswordValid){
 
