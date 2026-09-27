@@ -19,8 +19,8 @@ connectionReqest Router
 -Post / request/review/rejected/:requestId     |
 
 userRouter
+-Get /user/requests/recieved
 -Get /user/connections
--Get /user/requests
 -Get /feed  -> Gets you to profile of other users 
 
 Status : ignore, intrested, accepted , rejected

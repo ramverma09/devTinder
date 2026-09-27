@@ -4,6 +4,7 @@ const connectionRequestSchema = new mongoose.Schema(
     {
         fromUserId : {
             type: mongoose.Schema.Types.ObjectId,
+            ref: "User", //referance to the user collection
             require: true,
         },
         toUserId: {
