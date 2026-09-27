@@ -12,10 +12,11 @@ ProfileRoutern
 -Patch /profile/password
 
 connectionReqest Router
--Post / request/send/intrested/ :userId
--Post / request/send/ignore/ :userId
--Post / request/review/acccepted/:requestId
--Post / request/review/rejected/:requestId
+-Post /request/send/intrested/:userId   | -> /request/send/:status/:userId
+-Post /request/send/ignore/:userId      |
+
+-Post /request/review/acccepted/:requestId    | -> /request/review/:status/:requestId
+-Post / request/review/rejected/:requestId     |
 
 userRouter
 -Get /user/connections
